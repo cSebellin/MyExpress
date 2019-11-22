@@ -7,42 +7,49 @@ class MyExpress {
     }
 
     get(pathname, fun) {
-        this.routes.push({"id":1, pathname, fun})
+        this.routes.push({"method": "GET", pathname, fun})
     }
     
     post(pathname, fun) {
-        this.routes.push({"id":2, pathname, fun})
+        this.routes.push({"method": "POST", pathname, fun})
     }
     
     put(pathname, fun) {
-        this.routes.push({"id":3, pathname, fun})
+        this.routes.push({"method": "PUT", pathname, fun})
     }
     
     delete(pathname, fun) {
-        this.routes.push({"id":4, pathname, fun})
+        this.routes.push({"method": "DELETE", pathname, fun})
     }
     
     all(pathname, fun) {
-        this.routes.push({"id":5, pathname, fun})
+        this.routes.push({"method": "ALL", pathname, fun})
     }
     
     listen(port) {
         const server = http.createServer((req, res) => {
-            const { pathname } = url.parse(req.url, true)
+            const { query, pathname } = url.parse(req.url, true)
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             for (const route of this.routes) {
-                 if(route.pathname === pathname) {
+                if(route.pathname.match(/.+(\:.+).*/g)) {
+                    const id = pathname.replace(/.+\/(\d).*/g, "$1")
+                    route.pathname = route.pathname.replace(/\/$/g, "")
+                    route.pathname = route.pathname.replace(/(\:.+)/g, id)
+                }
+                 if(route.pathname === pathname
+                    && route.method === req.method ) {
+                    req.query = query;
+                    res.send = (content = "") => {
+                        res.write(content)
+                        res.end()
+                    }
                     route.fun(req, res);
                 }
             }
-            res.end();
         });
     
         server.listen(port)
-        console.log("MyExpress server listening on port ", port)
     }
-
-    
 }
 
 const express = () => {

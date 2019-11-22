@@ -1,22 +1,32 @@
 const express = require('./my-express');
 const app = express();
+const fs = require('fs')
 
-let i = 0;
-let j = 0;
+const LOCAL_DATABASE = 'students_my-express.json'
 
 app.get('/', function(req, res) {
-    res.write('Hello');
+    const {name} = req.query
+    res.send(`<h1>Hello, ${name || 'World'}!</h1>`)
 });
 
-app.get('/hello', function(req, res) {
-    res.write('Hello world');
-});
+app.put('/students/:id/edit', function(req, res){
+    /*let body = ''
+    req.on('data', chunk => {
+        body += chunk.toString()
+      })
 
-app.get('/hi', function(req, res) {
-    res.write('Hello universe');
-});
-
-app.post('/search', function(req, res) {
-    res.write('H');
-});
+      req.on('end', () => {
+        const {id} = req.params;
+        const user = JSON.parse(body)
+        const data = require(`./${LOCAL_DATABASE}`)
+        const index = data.findIndex(obj => obj.id == id)
+        data[index].name = user.name
+        fs.writeFileSync(LOCAL_DATABASE, JSON.stringify(data, null, 4))
+        res.send()
+      })
+    */
+   console.log("yes")
+   res.send()
+})
 app.listen(4545)
+console.log("MyExpress server listening on port ", 4545)
