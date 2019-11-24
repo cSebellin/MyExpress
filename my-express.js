@@ -1,11 +1,12 @@
 const http = require('http')
 const url = require('url')
-
+const {formatUrl, generateParams, getUrlId, checkEnds} = require('./helpers')
 class MyExpress {
     constructor() {
         this.routes = [];
     }
 
+    
     get(pathname, fun) {
         this.routes.push({"method": "GET", pathname, fun})
     }
@@ -28,17 +29,15 @@ class MyExpress {
     
     listen(port) {
         const server = http.createServer((req, res) => {
-            const { query, pathname } = url.parse(req.url, true)
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            let { query, pathname } = url.parse(req.url, true)
             for (const route of this.routes) {
-                if(route.pathname.match(/.+(\:.+).*/g)) {
-                    const id = pathname.replace(/.+\/(\d).*/g, "$1")
-                    route.pathname = route.pathname.replace(/\/$/g, "")
-                    route.pathname = route.pathname.replace(/(\:.+)/g, id)
-                }
-                 if(route.pathname === pathname
+                pathname = checkEnds(pathname);
+                const id = getUrlId(route.pathname, pathname);
+                const urlFormat = formatUrl(route.pathname, id);
+                if(urlFormat === pathname
                     && route.method === req.method ) {
                     req.query = query;
+                    req.params = generateParams(route.pathname, id);
                     res.send = (content = "") => {
                         res.write(content)
                         res.end()
@@ -47,7 +46,6 @@ class MyExpress {
                 }
             }
         });
-    
         server.listen(port)
     }
 }

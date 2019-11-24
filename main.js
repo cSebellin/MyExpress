@@ -9,8 +9,8 @@ app.get('/', function(req, res) {
     res.send(`<h1>Hello, ${name || 'World'}!</h1>`)
 });
 
-app.put('/students/:id/edit', function(req, res){
-    /*let body = ''
+app.put('/students/:id/', function(req, res){
+    let body = ''
     req.on('data', chunk => {
         body += chunk.toString()
       })
@@ -24,9 +24,6 @@ app.put('/students/:id/edit', function(req, res){
         fs.writeFileSync(LOCAL_DATABASE, JSON.stringify(data, null, 4))
         res.send()
       })
-    */
-   console.log("yes")
-   res.send()
 })
 app.listen(4545)
 console.log("MyExpress server listening on port ", 4545)

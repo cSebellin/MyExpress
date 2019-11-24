@@ -9,22 +9,22 @@ app.get('/', function(req, res) {
     res.send(`<h1>Hello, ${name || 'World'}!</h1>`)
 });
 
-app.put('/students/:id', function(req, res){
-    let body = ''
-    req.on('data', chunk => {
-        body += chunk.toString()
-      })
+app.put('/students/:id/', function(req, res){
+    // let body = ''
+    // req.on('data', chunk => {
+    //     body += chunk.toString()
+    //   })
 
-      req.on('end', () => {
-        const {id} = req.params;
-        const user = JSON.parse(body)
-        const data = require(`./${LOCAL_DATABASE}`)
-        const index = data.findIndex(obj => obj.id == id)
-        data[index].name = user.name
-        fs.writeFileSync(LOCAL_DATABASE, JSON.stringify(data, null, 4))
-        res.send()
-      })
-    
+    //   req.on('end', () => {
+    //     const {id} = req.params;
+    //     const user = JSON.parse(body)
+    //     const data = require(`./${LOCAL_DATABASE}`)
+    //     const index = data.findIndex(obj => obj.id == id)
+    //     data[index].name = user.name
+    //     fs.writeFileSync(LOCAL_DATABASE, JSON.stringify(data, null, 4))
+    //     res.send()
+    //   })
+    console.log(req.params)
 })
 app.listen(4242)
 console.log("Express server listening on port 4242")
