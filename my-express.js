@@ -1,6 +1,6 @@
 const http = require('http')
 const url = require('url')
-const {formatUrl, generateParams, getUrlId, checkEnds} = require('./helpers')
+const {formatUrl, generateParams, getUrlId, checkEnds, error} = require('./helpers')
 class MyExpress {
     constructor() {
         this.routes = [];
@@ -27,15 +27,18 @@ class MyExpress {
         this.routes.push({"method": "ALL", pathname, fun})
     }
     
-    listen(port) {
+    listen(port, fun) {
         const server = http.createServer((req, res) => {
             let { query, pathname } = url.parse(req.url, true)
+            let isRouteExist = false;
             for (const route of this.routes) {
                 pathname = checkEnds(pathname);
                 const id = getUrlId(route.pathname, pathname);
                 const urlFormat = formatUrl(route.pathname, id);
+
                 if(urlFormat === pathname
-                    && route.method === req.method ) {
+                    && (route.method === req.method 
+                        || route.method === "ALL") ) {
                     req.query = query;
                     req.params = generateParams(route.pathname, id);
                     res.send = (content = "") => {
@@ -43,10 +46,17 @@ class MyExpress {
                         res.end()
                     }
                     route.fun(req, res);
+                    isRouteExist = true;
                 }
+            }
+            if(!isRouteExist) {
+                res.writeHead(404, {'Content-Type': 'text/html'});
+                res.end(error(`Cannot ${req.method} ${pathname}`))
             }
         });
         server.listen(port)
+        if(typeof fun === "function")
+            fun()
     }
 }
 

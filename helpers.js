@@ -25,9 +25,23 @@ getUrlId = (route, url) => {
     return -1;
 }
 
+error = (error) => {
+    return `<!DOCTYPE html>\
+    <html lang=\"en\">\
+    <head>\
+        <meta charset=\"utf-8\">\
+        <title>Error</title>\
+    </head>\
+    <body>\
+        <pre>${error}</pre>\
+    </body>\
+    </html>`;
+}
+
 module.exports = {
     generateParams,
     formatUrl,
     getUrlId,
-    checkEnds
+    checkEnds,
+    error
 }

@@ -10,20 +10,14 @@ app.get('/', function(req, res) {
 });
 
 app.put('/students/:id/', function(req, res){
-    let body = ''
-    req.on('data', chunk => {
-        body += chunk.toString()
-      })
-
-      req.on('end', () => {
-        const {id} = req.params;
-        const user = JSON.parse(body)
-        const data = require(`./${LOCAL_DATABASE}`)
-        const index = data.findIndex(obj => obj.id == id)
-        data[index].name = user.name
-        fs.writeFileSync(LOCAL_DATABASE, JSON.stringify(data, null, 4))
-        res.send()
-      })
+  console.log(req.params)
+  res.end()
 })
-app.listen(4545)
-console.log("MyExpress server listening on port ", 4545)
+
+app.post('/students/edit', function(req, res){
+  console.log(req.body)
+  res.end()
+})
+app.listen(4545, function() {
+  console.log("MyExpress server listening on port ", 4545)
+})
