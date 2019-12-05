@@ -1,12 +1,22 @@
 const http = require('http')
 const url = require('url')
-const {formatUrl, generateParams, getUrlId, checkEnds, error} = require('./helpers')
+const {
+    formatUrl,
+    generateParams,
+    getUrlId,
+    checkEnds,
+    checkParam, 
+    checkFile, 
+    transformHtml, 
+    error
+} = require('./helpers')
+
 class MyExpress {
     constructor() {
         this.routes = [];
+        this.rends = [];
     }
 
-    
     get(pathname, fun) {
         this.routes.push({"method": "GET", pathname, fun})
     }
@@ -55,9 +65,37 @@ class MyExpress {
             }
         });
         server.listen(port)
+        for (const rend of this.rends) {
+            const {filename, queries, fun} = rend;
+            let err = {};
+            const html = checkFile(filename) || "";
+
+            if(html.length > 0) {
+                fun(err, transformHtml(html, queries));
+            } else {
+                err = {
+                    "status": 404,
+                    "text": "File not found"
+                };
+                fun(err, html);
+            } 
+        }
+        
         if(typeof fun === "function")
             fun()
     }
+    render(...params) {
+        if(params.length === 2 || params.length === 3) {
+            let obj = {};
+            for (const param of params) {
+                const key = Object.keys(checkParam(param))[0];
+                const value = Object.values(checkParam(param))[0];
+                obj[key] = value;
+            }
+            this.rends.push(obj)
+        }
+    }
+    
 }
 
 const express = () => {

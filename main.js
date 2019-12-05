@@ -18,6 +18,15 @@ app.post('/students/edit', function(req, res){
   console.log(req.body)
   res.end()
 })
+
+app.render('email', function (err, html) {
+})
+
+app.render('index', { name: 'Chopper', age: 15 }, function (err, html) {
+  console.log(html)
+})
+
 app.listen(4545, function() {
   console.log("MyExpress server listening on port ", 4545)
 })
+
