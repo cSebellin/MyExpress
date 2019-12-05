@@ -4,8 +4,7 @@
   "description": "Express clone",
   "main": "my-express.js",
   "scripts": {
-    "start": "nodemon main.js",
-    "test": "nodemon express.js"
+    "start": "nodemon main.js"
   },
   "author": "Rachid Charline",
   "license": "ISC",
