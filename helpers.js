@@ -28,15 +28,43 @@ getUrlId = (route, url) => {
 }
 
 transformHtml = (html, queries) => {
-    return replaceAll(html, queries)
+    return replaceAll(html, queries);
 }
 
 replaceAll = (html, values) => {
-    for (const key in values) {
+    for (const key in values) { 
         html = html.replace(new RegExp(`{{${key}}}`,"g"), values[key]);
     }
     return html;
 };
+
+formatQueries = (html, queries) => {
+    console.log(queries)
+    /*let properties = html.match(new RegExp(`({{.+}})`,"gm")).join(" ");
+
+    for (const key in queries) {
+        const prop = properties.replace(new RegExp(`{{${key}\s*\|\s*(\w+)}}`,"gm"), "$1");
+        console.log(prop)
+        console.log(properties)
+        properties = properties.replace(new RegExp(`} {`,"gm"), "}---{");
+        const objects = properties.split("---");
+        
+       // queries[key] = modifiers(queries[key], ,);
+    }*/
+    return queries;
+}
+
+modifiers = (value, modifier, modifier_value) => {
+    switch(modifier) {
+        case "fixed":
+            return value.toFixed(modifier_value);
+        case "upper":
+            return value.toUpperCase();
+        case "lower":
+            return value.toLowerCase();
+        default: return value;
+    }
+}
 
 checkParam = param => {
     switch(typeof param) {

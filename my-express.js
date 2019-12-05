@@ -14,7 +14,7 @@ const {
 class MyExpress {
     constructor() {
         this.routes = [];
-        this.rends = [];
+        //this.rends = [];
     }
 
     get(pathname, fun) {
@@ -64,8 +64,8 @@ class MyExpress {
                 res.end(error(`Cannot ${req.method} ${pathname}`))
             }
         });
-        server.listen(port)
-        for (const rend of this.rends) {
+        
+        /*for (const rend of this.rends) {
             const {filename, queries, fun} = rend;
             let err = {};
             const html = checkFile(filename) || "";
@@ -79,11 +79,13 @@ class MyExpress {
                 };
                 fun(err, html);
             } 
-        }
-        
+        }*/
+
+        server.listen(port)
         if(typeof fun === "function")
             fun()
     }
+    
     render(...params) {
         if(params.length === 2 || params.length === 3) {
             let obj = {};
@@ -92,10 +94,22 @@ class MyExpress {
                 const value = Object.values(checkParam(param))[0];
                 obj[key] = value;
             }
-            this.rends.push(obj)
+            const {filename, queries, fun} = obj;
+                let err = {};
+                const html = checkFile(filename) || "";
+
+                if(html.length > 0) {
+                    fun(err, transformHtml(html, queries));
+                } else {
+                    err = {
+                        "status": 404,
+                        "text": "File not found"
+                    };
+                    fun(err, html);
+                } 
+            //this.rends.push(obj)
         }
     }
-    
 }
 
 const express = () => {
