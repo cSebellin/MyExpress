@@ -34,11 +34,20 @@ transformHtml = (html, queries) => {
 
 replaceAll = (html, values) => {
     for (const key in values) { 
-        html = html.replace(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*}}`), values[key])
-        .replace(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*:\\s*(\\d)\\s*}}`), values[key]);
+        html = html.replace(htmlRegex(html, key), values[key]);
     }
     return html;
 };
+
+htmlRegex = (str, key) => {
+    if(str.match(new RegExp(`{{\\s*${key}\\s*}}`)))
+        return new RegExp(`{{\\s*${key}\\s*}}`, "g");
+    else if(str.match(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*:\\s*(\\d)\\s*}}`)))
+        return new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*:\\s*(\\d)\\s*}}`, "g");
+    else if(str.match(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*}}`))) 
+        return new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*}}`, "g");
+    return new RegExp(null)
+}
 
 formatQueries = (html, queries) => {
     let properties = html.match(/({{.+}})/g).join(" ");
