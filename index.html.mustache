@@ -14,7 +14,8 @@
         Hello World
       </h1>
       <p class="subtitle">
-        <h1>Hello {{name}} {{age}}</h1>
+        <h1>Hello {{ name | lower }} {{ age | fixed: 3}}</h1>
+        <h1>Hello {{ size | fixed: 1 }} {{ year }}</h1>
       </p>
     </div>
   </section>

@@ -28,36 +28,43 @@ getUrlId = (route, url) => {
 }
 
 transformHtml = (html, queries) => {
+    formatQueries(html, queries)
     return replaceAll(html, queries);
 }
 
 replaceAll = (html, values) => {
     for (const key in values) { 
-        html = html.replace(new RegExp(`{{${key}}}`,"g"), values[key]);
+        html = html.replace(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*}}`), values[key])
+        .replace(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*:\\s*(\\d)\\s*}}`), values[key]);
     }
     return html;
 };
 
 formatQueries = (html, queries) => {
-    console.log(queries)
-    /*let properties = html.match(new RegExp(`({{.+}})`,"gm")).join(" ");
-
+    let properties = html.match(/({{.+}})/g).join(" ");
     for (const key in queries) {
-        const prop = properties.replace(new RegExp(`{{${key}\s*\|\s*(\w+)}}`,"gm"), "$1");
-        console.log(prop)
-        console.log(properties)
-        properties = properties.replace(new RegExp(`} {`,"gm"), "}---{");
-        const objects = properties.split("---");
-        
-       // queries[key] = modifiers(queries[key], ,);
-    }*/
+        const prop = getModifiers(properties, key);
+        if(prop) queries[key] = modifiers(queries[key], prop);
+    }
     return queries;
 }
 
-modifiers = (value, modifier, modifier_value) => {
-    switch(modifier) {
+getModifiers = (properties, key) => {
+    let prop = [];
+    if(properties.match(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*}}`))) {
+        prop = properties.match(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*}}`));
+        return {"modifier": prop[1]};
+    } else if(properties.match(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*:\\s*(\\d)\\s*}}`))) {
+        prop = properties.match(new RegExp(`{{\\s*${key}\\s*\\|\\s*(\\w+)\\s*:\\s*(\\d)\\s*}}`));
+        return {"modifier": prop[1], "modifier_value": prop[2]};
+    }
+    return null;
+}
+
+modifiers = (value, prop) => {
+    switch(prop.modifier) {
         case "fixed":
-            return value.toFixed(modifier_value);
+            return value.toFixed(prop.modifier_value);
         case "upper":
             return value.toUpperCase();
         case "lower":

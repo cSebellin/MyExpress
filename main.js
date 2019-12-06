@@ -22,8 +22,8 @@ app.post('/students/edit', function(req, res){
 app.render('email', function (err, html) {
 })
 
-app.render('index', { name: 'Chopper', age: 15.535848 }, function (err, html) {
-    console.log(html)
+app.render('index', { name: 'CHOOPPER', age: 15.535848 }, function (err, html) {
+  console.log(html)
 })
 
 app.listen(4545, function() {
